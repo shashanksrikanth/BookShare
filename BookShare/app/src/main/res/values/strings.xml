@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">BookShare</string>
     <string name="app_logo">App logo</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="type_username_here">Type username here</string>
+    <string name="password">Password</string>
+    <string name="go">Go</string>
 </resources>
