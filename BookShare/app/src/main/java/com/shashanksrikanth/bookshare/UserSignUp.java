@@ -8,13 +8,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class UserSignUp extends AppCompatActivity {
 
-    String userEmail;
-    String userID;
     boolean goBackToMainActivity;
     EditText userFirstName;
     EditText userLastName;
@@ -28,8 +28,6 @@ public class UserSignUp extends AppCompatActivity {
 
         // Unpack intent
         Intent intent = getIntent();
-        userEmail = intent.getStringExtra("userEmail");
-        userID = intent.getStringExtra("userEmail");
         goBackToMainActivity = intent.getBooleanExtra("goBackToMain", false);
 
         // Declare edit texts and text views
@@ -52,12 +50,14 @@ public class UserSignUp extends AppCompatActivity {
         if(isValid) {
             String firstName = userFirstName.getText().toString();
             String lastName = userLastName.getText().toString();
-            String modifiedUserEmail = userEmail.replace('.', '%');
-            AppUser user = new AppUser(firstName, lastName, modifiedUserEmail);
-            databaseReference.child("users").child(userID).setValue(user);
-            Intent intent = new Intent(this, UserHomePage.class);
-            startActivity(intent);
-            finish();
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if(currentUser!=null) {
+                AppUser user = new AppUser(firstName, lastName, currentUser.getEmail());
+                databaseReference.child("users").child(currentUser.getUid()).setValue(user);
+                Intent intent = new Intent(this, UserHomePage.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 

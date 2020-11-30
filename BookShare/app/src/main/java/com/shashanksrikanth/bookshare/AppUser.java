@@ -1,9 +1,9 @@
 package com.shashanksrikanth.bookshare;
 
 public class AppUser {
-    String firstName;
-    String lastName;
-    String email;
+    public String firstName;
+    public String lastName;
+    public String email;
 
     public AppUser() {}
 
