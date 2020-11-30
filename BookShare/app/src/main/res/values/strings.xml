@@ -8,5 +8,10 @@
     <string name="password">Password</string>
     <string name="go">Go</string>
     <string name="missingCredentials">Username or password is missing</string>
+    <string name="missingInformation">First name or last name is missing</string>
     <string name="email">Email</string>
+    <string name="new_user_details">New User Details</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="register">Register</string>
 </resources>

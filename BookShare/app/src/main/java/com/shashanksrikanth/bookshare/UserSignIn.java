@@ -64,6 +64,7 @@ public class UserSignIn extends AppCompatActivity {
                             Intent intent = new Intent(UserSignIn.this, UserSignUp.class);
                             assert user != null;
                             intent.putExtra("userEmail", user.getEmail());
+                            intent.putExtra("userID", user.getUid());
                             intent.putExtra("goBackToMain", false);
                             startActivity(intent);
                             UserSignIn.this.finish();
@@ -81,6 +82,7 @@ public class UserSignIn extends AppCompatActivity {
                             Intent intent = new Intent(UserSignIn.this, UserSignUp.class);
                             assert user != null;
                             intent.putExtra("userEmail", user.getEmail());
+                            intent.putExtra("userID", user.getUid());
                             intent.putExtra("goBackToMain", false);
                             startActivity(intent);
                             UserSignIn.this.finish();
