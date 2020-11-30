@@ -1,10 +1,13 @@
 package com.shashanksrikanth.bookshare;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -55,6 +58,7 @@ public class UserSignUp extends AppCompatActivity {
                 AppUser user = new AppUser(firstName, lastName, currentUser.getEmail());
                 databaseReference.child("users").child(currentUser.getUid()).setValue(user);
                 Intent intent = new Intent(this, UserHomePage.class);
+                intent.putExtra("goBackToPreviousActivity", false);
                 startActivity(intent);
                 finish();
             }
@@ -72,5 +76,16 @@ public class UserSignUp extends AppCompatActivity {
         }
         else errorMessage.setText("");
         return isValid;
+    }
+
+    public void hideKeyboard(View v) {
+        // On-click function that hides the keyboard when the screen is touched
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm == null) return;
+        View view = getCurrentFocus();
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
