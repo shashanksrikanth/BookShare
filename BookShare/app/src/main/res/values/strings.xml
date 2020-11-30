@@ -7,4 +7,6 @@
     <string name="type_username_here">Type username here</string>
     <string name="password">Password</string>
     <string name="go">Go</string>
+    <string name="missingCredentials">Username or password is missing</string>
+    <string name="email">Email</string>
 </resources>
