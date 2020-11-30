@@ -15,4 +15,6 @@
     <string name="last_name">Last Name</string>
     <string name="register">Register</string>
     <string name="welcome">Welcome</string>
+    <string name="drawer_open">Open drawer</string>
+    <string name="drawer_close">Close drawer</string>
 </resources>
