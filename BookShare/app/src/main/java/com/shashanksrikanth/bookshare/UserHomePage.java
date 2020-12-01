@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -98,8 +97,14 @@ public class UserHomePage extends AppCompatActivity {
 
     private void selectItem(int position) {
         // Dictates what to do when a drawer item is selected
-        String message = "You have selected " + drawerItems[position];
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        if(drawerItems[position].equals("Donor Page")) {
+            Intent intent = new Intent(this, DonorHomePage.class);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(this, ReceiverHomePage.class);
+            startActivity(intent);
+        }
         drawerLayout.closeDrawer(drawerList);
     }
 
