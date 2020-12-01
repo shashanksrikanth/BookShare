@@ -61,10 +61,9 @@ public class UserSignIn extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            Intent intent = new Intent(UserSignIn.this, UserSignUp.class);
+                            Intent intent = new Intent(UserSignIn.this, UserHomePage.class);
                             assert user != null;
-                            intent.putExtra("userEmail", user.getEmail());
-                            intent.putExtra("goBackToMain", false);
+                            intent.putExtra("goBackToPreviousActivity", false);
                             startActivity(intent);
                             UserSignIn.this.finish();
                         }
@@ -80,7 +79,6 @@ public class UserSignIn extends AppCompatActivity {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             Intent intent = new Intent(UserSignIn.this, UserSignUp.class);
                             assert user != null;
-                            intent.putExtra("userEmail", user.getEmail());
                             intent.putExtra("goBackToMain", false);
                             startActivity(intent);
                             UserSignIn.this.finish();
