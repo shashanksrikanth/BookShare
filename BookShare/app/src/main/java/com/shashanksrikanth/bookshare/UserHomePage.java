@@ -106,7 +106,7 @@ public class UserHomePage extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState(); // <== IMPORTANT
+        drawerToggle.syncState();
     }
 
     @Override
