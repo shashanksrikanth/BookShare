@@ -10,11 +10,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class UserSignUp extends AppCompatActivity {
 
@@ -22,7 +22,7 @@ public class UserSignUp extends AppCompatActivity {
     EditText userFirstName;
     EditText userLastName;
     TextView errorMessage;
-    DatabaseReference databaseReference;
+    FirebaseFirestore databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class UserSignUp extends AppCompatActivity {
         errorMessage = findViewById(R.id.errorMessageSignUp);
 
         // Declare Firebase DB reference
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class UserSignUp extends AppCompatActivity {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if(currentUser!=null) {
                 AppUser user = new AppUser(firstName, lastName, currentUser.getEmail());
-                databaseReference.child("users").child(currentUser.getUid()).setValue(user);
+                databaseReference.collection("users").document(currentUser.getUid()).set(user);
                 Intent intent = new Intent(this, UserHomePage.class);
                 intent.putExtra("goBackToPreviousActivity", false);
                 startActivity(intent);

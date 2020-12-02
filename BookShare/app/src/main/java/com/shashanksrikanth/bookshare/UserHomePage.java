@@ -14,13 +14,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Document;
 
 public class UserHomePage extends AppCompatActivity {
 
@@ -31,6 +39,7 @@ public class UserHomePage extends AppCompatActivity {
     String[] drawerItems;
     String userID;
     boolean goBackToPreviousActivity;
+    FirebaseFirestore databaseReference;
     private static final String TAG = "UserHomePage";
 
     @Override
@@ -49,19 +58,8 @@ public class UserHomePage extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser!=null) userID = currentUser.getUid();
 
-        // Get user's name from database
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                getName(snapshot);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        // Get database reference
+        databaseReference = FirebaseFirestore.getInstance();
 
         // Set up drawer menu
         drawerItems = new String[] {"Donor Page", "Receiver Page"};
@@ -79,15 +77,18 @@ public class UserHomePage extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-    }
 
-    private void getName(DataSnapshot snapshot) {
-        for(DataSnapshot snap : snapshot.getChildren()) {
-            String firstName = snap.child(userID).getValue(AppUser.class).firstName;
-            String lastName = snap.child(userID).getValue(AppUser.class).lastName;
-            String welcomeMessage = firstName + " " + lastName + "!";
-            userNameLabel.setText(welcomeMessage);
-        }
+        // Set up welcome message
+        DocumentReference documentReference = databaseReference.collection("users").document(userID);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                AppUser user = documentSnapshot.toObject(AppUser.class);
+                String message = user.firstName + " " + user.lastName + "!";
+                userNameLabel.setText(message);
+            }
+        });
+
     }
 
     public void onBackPressed() {
