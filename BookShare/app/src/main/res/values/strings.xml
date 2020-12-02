@@ -20,4 +20,6 @@
     <string name="donation_lists">Donation Lists</string>
     <string name="list_definition">List Definition</string>
     <string name="add_list">Add List</string>
+    <string name="list_name">Name:</string>
+    <string name="list_description">Description:</string>
 </resources>

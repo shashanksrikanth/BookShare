@@ -5,24 +5,38 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.*;
 
 public class DonorHomePage extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     ListView drawerList;
     ActionBarDrawerToggle drawerToggle;
+    FirebaseFirestore databaseReference;
     String[] drawerItems;
+    ArrayList<DonorListItem> donorList;
     private static final String TAG = "DonorHomePage";
 
     @Override
@@ -46,6 +60,9 @@ public class DonorHomePage extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
+
+        // Get database reference
+        databaseReference = FirebaseFirestore.getInstance();
     }
 
     private void selectItem(int position) {
@@ -63,7 +80,7 @@ public class DonorHomePage extends AppCompatActivity {
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
-        // Needed for drawer meny
+        // Needed for drawer menu
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
     }
@@ -91,19 +108,52 @@ public class DonorHomePage extends AppCompatActivity {
         }
         switch(item.getItemId()) {
             case R.id.addDonorList:
-                Toast.makeText(this, "You have chosen to add a list", Toast.LENGTH_LONG).show();
+                LayoutInflater inflater = LayoutInflater.from(this);
+                @SuppressLint("InflateParams")
+                final View dialogView = inflater.inflate(R.layout.add_donor_list_dialog, null);
+                AlertDialog.Builder addBuilder = new AlertDialog.Builder(this);
+                addBuilder.setTitle("Add List");
+                addBuilder.setIcon(R.drawable.baseline_add_circle_black_48);
+                addBuilder.setView(dialogView);
+                addBuilder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText listName = dialogView.findViewById(R.id.listName);
+                        EditText listDescription = dialogView.findViewById(R.id.listDescription);
+                        String name = listName.getText().toString().trim();
+                        String description = listDescription.getText().toString();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        String uid = user.getUid();
+                        ArrayList<String> isbn = new ArrayList<>();
+                        DonorListItem item = new DonorListItem(name, description, uid, isbn);
+                        databaseReference.collection("donorBookLists").add(item);
+                        updateDonorList();
+                    }
+                });
+                addBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                });
+                AlertDialog addDialog = addBuilder.create();
+                addDialog.show();
                 return true;
             case R.id.donorListDefinition:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setIcon(R.drawable.baseline_help_black_48);
-                builder.setTitle("What is a donation list?");
-                builder.setMessage("A donation list is a list of donations you can make available to a recipient. It can either be " +
+                AlertDialog.Builder definitionBuilder = new AlertDialog.Builder(this);
+                definitionBuilder.setIcon(R.drawable.baseline_help_black_48);
+                definitionBuilder.setTitle("What is a donation list?");
+                definitionBuilder.setMessage("A donation list is a list of donations you can make available to a recipient. It can either be " +
                         "specific (i.e., fiction, for kids), or it can be a general list");
-                AlertDialog dialog = builder.create();
+                AlertDialog dialog = definitionBuilder.create();
                 dialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void updateDonorList() {
+        // Helper function that gets the lists from the database and updates the arraylist
     }
 }
