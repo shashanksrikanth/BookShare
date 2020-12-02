@@ -2,13 +2,14 @@ package com.shashanksrikanth.bookshare;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -62,21 +63,47 @@ public class DonorHomePage extends AppCompatActivity {
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
+        // Needed for drawer meny
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        // Needed for drawer menu
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu layout
+        getMenuInflater().inflate(R.menu.donor_home_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // What to do when a menu item is clicked
         if(drawerToggle.onOptionsItemSelected(item)) {
             Log.d(TAG, "onOptionsItemSelected: drawerToggle " + item);
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case R.id.addDonorList:
+                Toast.makeText(this, "You have chosen to add a list", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.donorListDefinition:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setIcon(R.drawable.baseline_help_black_48);
+                builder.setTitle("What is a donation list?");
+                builder.setMessage("A donation list is a list of donations you can make available to a recipient. It can either be " +
+                        "specific (i.e., fiction, for kids), or it can be a general list");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
