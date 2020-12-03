@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReceiverHomePage"></activity>
+        <activity android:name=".DonorBookPage"></activity>
+        <activity android:name=".ReceiverHomePage" />
         <activity android:name=".DonorHomePage" />
         <activity android:name=".UserHomePage" />
         <activity android:name=".UserSignUp" />

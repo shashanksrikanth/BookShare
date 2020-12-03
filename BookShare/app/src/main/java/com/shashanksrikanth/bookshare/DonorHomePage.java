@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.LogDescriptor;
 import com.google.firebase.auth.FirebaseAuth;
@@ -183,6 +184,7 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
                             for(QueryDocumentSnapshot document: Objects.requireNonNull(task.getResult())) {
                                 ListItem item = document.toObject(ListItem.class);
                                 Log.d(TAG, "onComplete: " + item.listName);
+                                item.setListDatabaseID(document.getId());
                                 donorList.add(item);
                                 adapter.notifyDataSetChanged();
                             }
@@ -198,6 +200,27 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onLongClick(View v) {
+        // Delete list when it is held on for long
+        final int index = recyclerView.getChildLayoutPosition(v);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String listDatabaseID = donorList.get(index).listDatabaseID;
+                databaseReference.collection("bookLists").document(listDatabaseID)
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Deleted entry");
+                            }
+                        });
+                updateDonorList();
+            }
+        });
+        builder.setTitle("Delete List");
+        AlertDialog dialog = builder.create();
+        dialog.show();
         return true;
     }
 }

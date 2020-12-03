@@ -7,6 +7,7 @@ public class ListItem {
     public String listDescription;
     public String uid;
     public String listType;
+    public String listDatabaseID;
     public ArrayList<String> isbnList;
 
     public ListItem() {}
@@ -17,5 +18,9 @@ public class ListItem {
         this.uid = uid;
         this.listType = listType;
         this.isbnList = isbnList;
+    }
+
+    public void setListDatabaseID(String databaseID) {
+        this.listDatabaseID = databaseID;
     }
 }
