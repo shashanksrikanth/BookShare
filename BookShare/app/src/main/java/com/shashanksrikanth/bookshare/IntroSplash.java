@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 public class IntroSplash extends AppCompatActivity {
+    // An intro splash activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

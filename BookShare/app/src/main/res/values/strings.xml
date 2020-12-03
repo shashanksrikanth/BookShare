@@ -22,4 +22,6 @@
     <string name="add_list">Add List</string>
     <string name="list_name">Name:</string>
     <string name="list_description">Description:</string>
+    <string name="donor_book_description">Donor Book Description</string>
+    <string name="add_book">Add Book</string>
 </resources>

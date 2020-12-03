@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
+    // Adapter for the ListItem class and RecyclerView in the DonorHomePage
 
     ArrayList<ListItem> listItems;
     DonorHomePage donorHomePage;

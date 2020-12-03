@@ -1,6 +1,8 @@
 package com.shashanksrikanth.bookshare;
 
 public class AppUser {
+    // A class that represents a user of the app
+
     public String firstName;
     public String lastName;
     public String email;

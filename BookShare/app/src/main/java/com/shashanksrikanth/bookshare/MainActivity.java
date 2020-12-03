@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
+    // First activity that users see after the splash screen- the login page
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

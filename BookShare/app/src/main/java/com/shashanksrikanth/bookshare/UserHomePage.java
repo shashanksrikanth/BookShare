@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class UserHomePage extends AppCompatActivity {
+    // The activity that users land in after signing up or signing in- from here, they can go to DonorHomePage or ReceiverHomePage
 
     TextView userNameLabel;
     DrawerLayout drawerLayout;

@@ -3,6 +3,8 @@ package com.shashanksrikanth.bookshare;
 import java.util.ArrayList;
 
 public class ListItem {
+    // A class that represents an item in a list (could be any type of list- donor or wishlist or such)
+
     public String listName;
     public String listDescription;
     public String uid;

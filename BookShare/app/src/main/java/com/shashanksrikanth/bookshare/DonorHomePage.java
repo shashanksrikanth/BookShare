@@ -35,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.*;
 
 public class DonorHomePage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
+    // The activity that shows the donor's home page- it shows all of the donation lists
 
     DrawerLayout drawerLayout;
     ListView drawerList;

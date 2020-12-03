@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 public class UserSignUp extends AppCompatActivity {
+    // Activity that registers user's details after successful sign up
 
     boolean goBackToMainActivity;
     EditText userFirstName;
