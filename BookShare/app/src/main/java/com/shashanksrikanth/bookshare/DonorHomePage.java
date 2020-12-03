@@ -5,15 +5,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,20 +22,29 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.api.LogDescriptor;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.*;
 
-public class DonorHomePage extends AppCompatActivity {
+public class DonorHomePage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
     DrawerLayout drawerLayout;
     ListView drawerList;
     ActionBarDrawerToggle drawerToggle;
-    FirebaseFirestore databaseReference;
     String[] drawerItems;
-    ArrayList<DonorListItem> donorList;
+
+    FirebaseFirestore databaseReference;
+
+    RecyclerView recyclerView;
+    ListItemAdapter adapter;
+    ArrayList<ListItem> donorList = new ArrayList<>();
     private static final String TAG = "DonorHomePage";
 
     @Override
@@ -63,6 +71,13 @@ public class DonorHomePage extends AppCompatActivity {
 
         // Get database reference
         databaseReference = FirebaseFirestore.getInstance();
+
+        // Set up RecyclerView
+        recyclerView = findViewById(R.id.donorHomeRecyclerView);
+        adapter = new ListItemAdapter(donorList, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        updateDonorList();
     }
 
     private void selectItem(int position) {
@@ -123,10 +138,11 @@ public class DonorHomePage extends AppCompatActivity {
                         String name = listName.getText().toString().trim();
                         String description = listDescription.getText().toString();
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        assert user != null;
                         String uid = user.getUid();
                         ArrayList<String> isbn = new ArrayList<>();
-                        DonorListItem item = new DonorListItem(name, description, uid, isbn);
-                        databaseReference.collection("donorBookLists").add(item);
+                        ListItem item = new ListItem(name, description, uid, "Donor list", isbn);
+                        databaseReference.collection("bookLists").add(item);
                         updateDonorList();
                     }
                 });
@@ -155,5 +171,33 @@ public class DonorHomePage extends AppCompatActivity {
 
     private void updateDonorList() {
         // Helper function that gets the lists from the database and updates the arraylist
+        donorList.clear();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        String uid = user.getUid();
+        databaseReference.collection("bookLists").whereEqualTo("uid", uid).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            for(QueryDocumentSnapshot document: Objects.requireNonNull(task.getResult())) {
+                                ListItem item = document.toObject(ListItem.class);
+                                Log.d(TAG, "onComplete: " + item.listName);
+                                donorList.add(item);
+                            }
+                        }
+                    }
+                });
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return true;
     }
 }
