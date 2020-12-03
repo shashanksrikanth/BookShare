@@ -184,11 +184,11 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
                                 ListItem item = document.toObject(ListItem.class);
                                 Log.d(TAG, "onComplete: " + item.listName);
                                 donorList.add(item);
+                                adapter.notifyDataSetChanged();
                             }
                         }
                     }
                 });
-        adapter.notifyDataSetChanged();
     }
 
     @Override
