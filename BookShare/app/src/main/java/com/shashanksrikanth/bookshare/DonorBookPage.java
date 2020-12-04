@@ -2,19 +2,28 @@ package com.shashanksrikanth.bookshare;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DonorBookPage extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class DonorBookPage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     // The activity that shows the books the donor has up for donation- specific for each list of donations
 
     TextView listName;
     TextView listDescription;
+
+    ArrayList<BookItem> bookList = new ArrayList<>();
+    RecyclerView recyclerView;
+    BookItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +41,12 @@ public class DonorBookPage extends AppCompatActivity {
             listName.setText(item.listName);
             listDescription.setText(item.listDescription);
         }
+
+        // Set up RecyclerView
+        recyclerView = findViewById(R.id.donorBookPageRecyclerView);
+        adapter = new BookItemAdapter(bookList, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -58,6 +73,16 @@ public class DonorBookPage extends AppCompatActivity {
                 dialog.show();
                 return true;
         }
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
         return true;
     }
 }
