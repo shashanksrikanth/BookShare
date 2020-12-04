@@ -196,7 +196,11 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
+        Intent intent = new Intent(this, DonorBookPage.class);
+        int index = recyclerView.getChildLayoutPosition(v);
+        ListItem item = donorList.get(index);
+        intent.putExtra("ListItem", item);
+        startActivity(intent);
     }
 
     @Override

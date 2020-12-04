@@ -1,8 +1,9 @@
 package com.shashanksrikanth.bookshare;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ListItem {
+public class ListItem implements Serializable {
     // A class that represents an item in a list (could be any type of list- donor or wishlist or such)
 
     public String listName;
