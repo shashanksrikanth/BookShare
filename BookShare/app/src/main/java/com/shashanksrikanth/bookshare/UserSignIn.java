@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class UserSignIn extends AppCompatActivity {
+    // Activity that allows user to sign in or sign up
 
     boolean signIn;
     EditText usernameSignIn;

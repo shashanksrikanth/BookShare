@@ -9,4 +9,5 @@ In the branches section and in the commits, you will see tags such as *BOOK-2* o
 1. *BOOK-2*: Create layouts for MainActivity, UserSignIn, UserSignUp
 2. *BOOK-3*: Set up authentication using FireBase
 3. *BOOK-5*: Adding a registeration form after signing up, adding a landing home page 
-4. *BOOK-10*: Adding drawer menus to UserHomePage, DonorHomePage, and ReceiverHomePage (i.e., the home pages)
+4. *BOOK-6*: Adding functionality that enables the user to add lists of donations
+5. *BOOK-10*: Adding drawer menus to UserHomePage, DonorHomePage, and ReceiverHomePage (i.e., the home pages)

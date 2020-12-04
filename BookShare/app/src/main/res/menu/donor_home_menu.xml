@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/addDonorList"
+        android:icon="@drawable/baseline_add_circle_black_48"
+        android:title="@string/add_list"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/donorListDefinition"
+        android:icon="@drawable/baseline_help_black_48"
+        android:title="@string/list_definition"
+        app:showAsAction="ifRoom" />
+</menu>

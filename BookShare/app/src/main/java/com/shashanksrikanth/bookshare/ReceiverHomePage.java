@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class ReceiverHomePage extends AppCompatActivity {
+    // Activity that is the home page for receivers
 
     DrawerLayout drawerLayout;
     ListView drawerList;
