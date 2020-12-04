@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DonorBookPage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     // The activity that shows the books the donor has up for donation- specific for each list of donations
@@ -24,6 +25,8 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
     ArrayList<BookItem> bookList = new ArrayList<>();
     RecyclerView recyclerView;
     BookItemAdapter adapter;
+
+    HashMap<String, BookItem> storedBooks = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,5 +87,18 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
     @Override
     public boolean onLongClick(View v) {
         return true;
+    }
+
+    public void addBookToList(String isbn, BookItem item) {
+        // Add a book to the list- isbn and book is sent from BookDownloader
+    }
+
+    public void updateBookList() {
+        // Update book list every time there is a change
+    }
+
+    public void noBookError(String isbn) {
+        // Pops up a toast if there is no book with the user-given ISBN
+        Toast.makeText(this, "Book with " + isbn + " not found.", Toast.LENGTH_LONG).show();
     }
 }
