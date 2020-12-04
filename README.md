@@ -10,4 +10,5 @@ In the branches section and in the commits, you will see tags such as *BOOK-2* o
 2. *BOOK-3*: Set up authentication using FireBase
 3. *BOOK-5*: Adding a registeration form after signing up, adding a landing home page 
 4. *BOOK-6*: Adding functionality that enables the user to add lists of donations
-5. *BOOK-10*: Adding drawer menus to UserHomePage, DonorHomePage, and ReceiverHomePage (i.e., the home pages)
+5. *BOOK-7*: Showing all the books the donor has for donation, adding a book for donation, deleting a book that is up for donation (i.e, all these books are list-specific)
+6. *BOOK-10*: Adding drawer menus to UserHomePage, DonorHomePage, and ReceiverHomePage (i.e., the home pages)
