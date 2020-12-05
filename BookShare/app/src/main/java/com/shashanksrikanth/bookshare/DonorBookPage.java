@@ -142,7 +142,6 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
         BookItem book = bookList.get(position);
         Intent intent = new Intent(this, BookDetail.class);
         intent.putExtra("BookItem", book);
-        intent.putExtra("ViewType", "Donor");
         startActivity(intent);
     }
 

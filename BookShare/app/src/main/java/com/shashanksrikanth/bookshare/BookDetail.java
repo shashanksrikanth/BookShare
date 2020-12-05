@@ -19,7 +19,6 @@ public class BookDetail extends AppCompatActivity {
     TextView bookDetailPublisher;
     TextView bookDetailAverageRating;
     ImageView bookDetailImage;
-    Button bookDetailRequestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +32,10 @@ public class BookDetail extends AppCompatActivity {
         bookDetailPublisher = findViewById(R.id.bookDetailPublisher);
         bookDetailAverageRating = findViewById(R.id.bookDetailAverageRating);
         bookDetailImage = findViewById(R.id.bookDetailImage);
-        bookDetailRequestButton = findViewById(R.id.bookDetailRequestButton);
 
         // Unpack intent
         Intent intent = getIntent();
         BookItem book = (BookItem) intent.getSerializableExtra("BookItem");
-        String viewType = intent.getStringExtra("ViewType");
-        if(viewType.equals("Donor")) bookDetailRequestButton.setVisibility(View.GONE);
 
         // Set texts
         if(!book.bookTitle.equals("NULL")) bookDetailTitle.setText(book.bookTitle);
