@@ -1,6 +1,7 @@
 package com.shashanksrikanth.bookshare;
 
 import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -16,6 +17,7 @@ public class BookDownloader implements Runnable{
     String isbn;
     String query = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
     DonorBookPage bookPage;
+    private static final String TAG = "BookDownloader";
 
     public BookDownloader(String isbn, DonorBookPage bookPage) {
         this.isbn = isbn;
@@ -43,6 +45,7 @@ public class BookDownloader implements Runnable{
         catch (Exception e) {
             return;
         }
+        Log.d(TAG, "run: " + sb.toString());
         processData(sb.toString());
     }
 
@@ -62,24 +65,24 @@ public class BookDownloader implements Runnable{
             JSONObject bookDetails = jsonResult.getJSONArray("items").getJSONObject(0);
             String bookTitle = "NULL";
             String bookAuthor = "NULL";
+            String bookPublisher = "NULL";
+            int bookAverageRating = -1;
+            String bookImageLink = "NULL";
             if(bookDetails.has("volumeInfo")) {
                 JSONObject volumeInfo = bookDetails.getJSONObject("volumeInfo");
                 if(volumeInfo.has("title")) bookTitle = volumeInfo.getString("title");
                 if(volumeInfo.has("authors")) bookAuthor = volumeInfo.getJSONArray("authors").getString(0);
+                if(volumeInfo.has("publisher")) bookPublisher = volumeInfo.getString("publisher");
+                if(volumeInfo.has("averageRating")) bookAverageRating = volumeInfo.getInt("averageRating");
+                if(volumeInfo.has("imageLinks")) {
+                    JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                    if(imageLinks.has("smallThumbnail")) bookImageLink = imageLinks.getString("smallThumbnail");
+                }
             }
-            String bookPublisher = "NULL";
-            if(bookDetails.has("publisher")) bookPublisher = bookDetails.getString("publisher");
             String bookDescription = "NULL";
             if(bookDetails.has("searchInfo")) {
                 JSONObject searchInfo = bookDetails.getJSONObject("searchInfo");
                 if(searchInfo.has("textSnippet")) bookDescription = searchInfo.getString("textSnippet");
-            }
-            int bookAverageRating = -1;
-            if(bookDetails.has("averageRating")) bookAverageRating = bookDetails.getInt("averageRating");
-            String bookImageLink = "NULL";
-            if(bookDetails.has("imageLinks")) {
-                JSONObject imageLinks = bookDetails.getJSONObject("imageLinks");
-                if(imageLinks.has("smallThumbnail")) bookImageLink = imageLinks.getString("smallThumbnail");
             }
             final BookItem bookItem = new BookItem(bookTitle, bookAuthor, bookPublisher, bookDescription, isbn, bookAverageRating, bookImageLink);
             bookPage.runOnUiThread(new Runnable() {

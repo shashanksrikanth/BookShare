@@ -1,6 +1,8 @@
 package com.shashanksrikanth.bookshare;
 
-public class BookItem {
+import java.io.Serializable;
+
+public class BookItem implements Serializable {
     // A class that represents a certain book- fields are populated from the results of BookDownloader
 
     public String bookTitle;
