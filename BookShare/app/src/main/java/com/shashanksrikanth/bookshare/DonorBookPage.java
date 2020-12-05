@@ -137,7 +137,13 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
+        // Opens up the details about the book
+        int position = recyclerView.getChildLayoutPosition(v);
+        BookItem book = bookList.get(position);
+        Intent intent = new Intent(this, BookDetail.class);
+        intent.putExtra("BookItem", book);
+        intent.putExtra("ViewType", "Donor");
+        startActivity(intent);
     }
 
     @Override

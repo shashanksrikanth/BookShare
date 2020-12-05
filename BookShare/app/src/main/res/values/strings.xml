@@ -24,4 +24,8 @@
     <string name="list_description">Description:</string>
     <string name="donor_book_description">Donor Book Description</string>
     <string name="add_book">Add Book</string>
+    <string name="book_picture">Book Picture</string>
+    <string name="publisher">Publisher:</string>
+    <string name="average_rating">Average Rating:</string>
+    <string name="request">Request!</string>
 </resources>
