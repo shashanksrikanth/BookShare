@@ -80,7 +80,7 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
 
         // Set up RecyclerView
         recyclerView = findViewById(R.id.donorHomeRecyclerView);
-        adapter = new ListItemAdapter(donorList, this);
+        adapter = new ListItemAdapter(donorList, this, null);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateDonorList();

@@ -13,18 +13,26 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
 
     ArrayList<ListItem> listItems;
     DonorHomePage donorHomePage;
+    ReceiverHomePage receiverHomePage;
 
-    public ListItemAdapter(ArrayList<ListItem> listItems, DonorHomePage donorHomePage) {
+    public ListItemAdapter(ArrayList<ListItem> listItems, DonorHomePage donorHomePage, ReceiverHomePage receiverHomePage) {
         this.listItems = listItems;
         this.donorHomePage = donorHomePage;
+        this.receiverHomePage = receiverHomePage;
     }
 
     @NonNull
     @Override
     public ListItemViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View listItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_recycler_row, parent, false);
-        listItemView.setOnClickListener(donorHomePage);
-        listItemView.setOnLongClickListener(donorHomePage);
+        if(donorHomePage!=null) {
+            listItemView.setOnClickListener(donorHomePage);
+            listItemView.setOnLongClickListener(donorHomePage);
+        }
+        else {
+            listItemView.setOnClickListener(receiverHomePage);
+            listItemView.setOnLongClickListener(receiverHomePage);
+        }
         ListItemViewHolder holder = new ListItemViewHolder(listItemView);
         return holder;
     }
