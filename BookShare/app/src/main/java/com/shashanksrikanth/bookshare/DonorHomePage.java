@@ -190,6 +190,7 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
                                 ListItem item = document.toObject(ListItem.class);
                                 Log.d(TAG, "onComplete: " + item.listName);
                                 item.setListDatabaseID(document.getId());
+                                databaseReference.collection("bookLists").document(document.getId()).update("listDatabaseID", document.getId());
                                 donorList.add(item);
                                 adapter.notifyDataSetChanged();
                             }
