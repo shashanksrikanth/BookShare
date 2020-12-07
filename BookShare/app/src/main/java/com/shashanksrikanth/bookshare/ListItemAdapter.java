@@ -1,6 +1,5 @@
 package com.shashanksrikanth.bookshare;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
 
     ArrayList<ListItem> listItems;
     DonorHomePage donorHomePage;
-    private static final String TAG = "ListItemAdapter";
 
     public ListItemAdapter(ArrayList<ListItem> listItems, DonorHomePage donorHomePage) {
         this.listItems = listItems;
@@ -28,7 +26,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         listItemView.setOnClickListener(donorHomePage);
         listItemView.setOnLongClickListener(donorHomePage);
         ListItemViewHolder holder = new ListItemViewHolder(listItemView);
-        Log.d(TAG, "onCreateViewHolder: created ListItemViewHolder");
         return holder;
     }
 
@@ -37,7 +34,13 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemViewHolder> {
         ListItem item = listItems.get(position);
         String itemName = item.listName;
         holder.listName.setText(itemName);
-        Log.d(TAG, "onBindViewHolder: name of item is " + itemName);
+        String itemDescription = item.listDescription;
+        if(itemDescription.equals("")) holder.listDescription.setText(R.string.no_description_available);
+        else if (itemDescription.length()>80) {
+            String description = itemDescription.substring(0,79) + "...";
+            holder.listDescription.setText(description);
+        }
+        else holder.listDescription.setText(itemDescription);
     }
 
     @Override
