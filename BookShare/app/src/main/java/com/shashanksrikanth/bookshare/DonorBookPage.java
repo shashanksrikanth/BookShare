@@ -18,7 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -161,6 +163,17 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
                 documentReference.update("isbnList", FieldValue.arrayRemove(isbn));
                 bookList.remove(position);
                 adapter.notifyDataSetChanged();
+                final DocumentReference documentReferenceIsbn =  databaseReference.collection("isbnLists").document(isbn);
+                documentReferenceIsbn.update("listIds", FieldValue.arrayRemove(listDatabaseID));
+                documentReferenceIsbn.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            IsbnItem isbnItem = task.getResult().toObject(IsbnItem.class);
+                            if(isbnItem.listIds.size() == 0) documentReferenceIsbn.delete();
+                        }
+                    }
+                });
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -174,13 +187,31 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    public void addBookToList(String isbn, BookItem item) {
+    public void addBookToList(final BookItem item) {
         // Add a book to the list- isbn and book is sent from BookDownloader
         bookList.add(item);
         adapter.notifyDataSetChanged();
-        storedBooks.put(isbn, item);
+        storedBooks.put(item.bookISBN, item);
         DocumentReference documentReference = databaseReference.collection("isbnLists").document("allUniqueGenres");
         documentReference.update("uniqueGenres", FieldValue.arrayUnion(item.bookGenre));
+        final DocumentReference documentReferenceIsbn = databaseReference.collection("isbnLists").document(item.bookISBN);
+        documentReferenceIsbn.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        documentReferenceIsbn.update("listIds", FieldValue.arrayUnion(listDatabaseID));
+                    }
+                    else {
+                        ArrayList<String> listIds = new ArrayList<>();
+                        listIds.add(listDatabaseID);
+                        IsbnItem isbnItem = new IsbnItem(item.bookISBN, item.bookTitle, item.bookAuthor, item.bookGenre, listIds);
+                        databaseReference.collection("isbnLists").document(item.bookISBN).set(isbnItem);
+                    }
+                }
+            }
+        });
     }
 
     public void updateBookList(String isbn, boolean isbnValid) {

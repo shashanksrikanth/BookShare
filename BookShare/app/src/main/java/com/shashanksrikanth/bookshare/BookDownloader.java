@@ -95,7 +95,7 @@ public class BookDownloader implements Runnable{
             bookPage.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    bookPage.addBookToList(isbn, bookItem);
+                    bookPage.addBookToList(bookItem);
                 }
             });
         }
