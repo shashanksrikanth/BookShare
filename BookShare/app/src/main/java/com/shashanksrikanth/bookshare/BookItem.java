@@ -12,11 +12,12 @@ public class BookItem implements Serializable {
     public String bookISBN;
     public int bookAverageRating;
     public String bookImageLink;
+    public String bookGenre;
 
     public BookItem() {}
 
     public BookItem(String bookTitle, String bookAuthor, String bookPublisher, String bookDescription,
-                    String bookISBN, int bookAverageRating, String bookImageLink) {
+                    String bookISBN, int bookAverageRating, String bookImageLink, String bookGenre) {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.bookPublisher = bookPublisher;
@@ -24,5 +25,6 @@ public class BookItem implements Serializable {
         this.bookISBN = bookISBN;
         this.bookAverageRating = bookAverageRating;
         this.bookImageLink = bookImageLink;
+        this.bookGenre = bookGenre;
     }
 }

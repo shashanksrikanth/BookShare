@@ -19,6 +19,7 @@ public class BookDetail extends AppCompatActivity {
     TextView bookDetailPublisher;
     TextView bookDetailAverageRating;
     ImageView bookDetailImage;
+    TextView bookDetailGenre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class BookDetail extends AppCompatActivity {
         bookDetailPublisher = findViewById(R.id.bookDetailPublisher);
         bookDetailAverageRating = findViewById(R.id.bookDetailAverageRating);
         bookDetailImage = findViewById(R.id.bookDetailImage);
+        bookDetailGenre = findViewById(R.id.bookDetailGenre);
 
         // Unpack intent
         Intent intent = getIntent();
@@ -45,5 +47,6 @@ public class BookDetail extends AppCompatActivity {
         if(book.bookAverageRating!=-1) bookDetailAverageRating.setText(Integer.toString(book.bookAverageRating));
         if(!book.bookImageLink.equals("NULL"))
             Picasso.get().load(book.bookImageLink).error(R.drawable.missing_book).placeholder(R.drawable.placeholder).into(bookDetailImage);
+        if(!book.bookGenre.equals("NULL")) bookDetailGenre.setText(book.bookGenre);
     }
 }

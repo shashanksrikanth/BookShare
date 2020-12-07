@@ -179,6 +179,8 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
         bookList.add(item);
         adapter.notifyDataSetChanged();
         storedBooks.put(isbn, item);
+        DocumentReference documentReference = databaseReference.collection("isbnLists").document("allUniqueGenres");
+        documentReference.update("uniqueGenres", FieldValue.arrayUnion(item.bookGenre));
     }
 
     public void updateBookList(String isbn, boolean isbnValid) {

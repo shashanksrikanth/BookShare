@@ -3,6 +3,7 @@ package com.shashanksrikanth.bookshare;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -68,6 +69,7 @@ public class BookDownloader implements Runnable{
             String bookPublisher = "NULL";
             int bookAverageRating = -1;
             String bookImageLink = "NULL";
+            String bookGenre = "NULL";
             if(bookDetails.has("volumeInfo")) {
                 JSONObject volumeInfo = bookDetails.getJSONObject("volumeInfo");
                 if(volumeInfo.has("title")) bookTitle = volumeInfo.getString("title");
@@ -78,13 +80,18 @@ public class BookDownloader implements Runnable{
                     JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                     if(imageLinks.has("smallThumbnail")) bookImageLink = imageLinks.getString("smallThumbnail");
                 }
+                if(volumeInfo.has("categories")) {
+                    JSONArray categories = volumeInfo.getJSONArray("categories");
+                    bookGenre = categories.getString(0);
+                }
             }
             String bookDescription = "NULL";
             if(bookDetails.has("searchInfo")) {
                 JSONObject searchInfo = bookDetails.getJSONObject("searchInfo");
                 if(searchInfo.has("textSnippet")) bookDescription = searchInfo.getString("textSnippet");
             }
-            final BookItem bookItem = new BookItem(bookTitle, bookAuthor, bookPublisher, bookDescription, isbn, bookAverageRating, bookImageLink);
+            final BookItem bookItem = new BookItem(bookTitle, bookAuthor, bookPublisher, bookDescription,
+                    isbn, bookAverageRating, bookImageLink, bookGenre);
             bookPage.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
