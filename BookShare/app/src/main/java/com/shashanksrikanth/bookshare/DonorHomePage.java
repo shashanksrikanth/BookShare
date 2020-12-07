@@ -29,6 +29,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.LogDescriptor;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -206,25 +209,40 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onLongClick(View v) {
-        // Delete list when it is held on for long
+        // Delete list when it is held on for long, delete IsbnItem if necessary
         final int index = recyclerView.getChildLayoutPosition(v);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String listDatabaseID = donorList.get(index).listDatabaseID;
-                databaseReference.collection("bookLists").document(listDatabaseID)
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Deleted entry");
+                final String listDatabaseID = donorList.get(index).listDatabaseID;
+                DocumentReference documentReference = databaseReference.collection("bookLists").document(listDatabaseID);
+                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            ArrayList<String> isbnList = task.getResult().toObject(ListItem.class).isbnList;
+                            for(String isbn: isbnList) {
+                                final DocumentReference documentReferenceIsbn =  databaseReference.collection("isbnLists").document(isbn);
+                                documentReferenceIsbn.update("listIds", FieldValue.arrayRemove(listDatabaseID));
+                                documentReferenceIsbn.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful()) {
+                                            IsbnItem isbnItem = task.getResult().toObject(IsbnItem.class);
+                                            if(isbnItem.listIds.size() == 0) documentReferenceIsbn.delete();
+                                        }
+                                    }
+                                });
                             }
-                        });
-                updateDonorList();
+                            databaseReference.collection("bookLists").document(listDatabaseID).delete();
+                            updateDonorList();
+                        }
+                    }
+                });
             }
         });
-        builder.setTitle("Delete List");
+        builder.setTitle("Delete List?");
         AlertDialog dialog = builder.create();
         dialog.show();
         return true;
