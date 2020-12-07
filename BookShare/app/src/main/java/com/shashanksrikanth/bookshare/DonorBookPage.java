@@ -149,7 +149,7 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onLongClick(View v) {
-        // Delete book from the list when long clicked
+        // Delete book from the list when long clicked, delete IsbnItem if necessary
         final int position = recyclerView.getChildLayoutPosition(v);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete?");
