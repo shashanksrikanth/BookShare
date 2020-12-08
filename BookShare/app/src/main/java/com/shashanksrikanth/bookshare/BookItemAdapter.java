@@ -12,18 +12,26 @@ public class BookItemAdapter extends RecyclerView.Adapter<BookItemViewHolder> {
 
     private ArrayList<BookItem> books;
     private DonorBookPage donorBookPage;
+    private ReceiverBookPage receiverBookPage;
 
-    public BookItemAdapter(ArrayList<BookItem> books, DonorBookPage donorBookPage) {
+    public BookItemAdapter(ArrayList<BookItem> books, DonorBookPage donorBookPage, ReceiverBookPage receiverBookPage) {
         this.books = books;
         this.donorBookPage = donorBookPage;
+        this.receiverBookPage = receiverBookPage;
     }
 
     @NonNull
     @Override
     public BookItemViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View bookView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bookitem_recycler_row, parent, false);
-        bookView.setOnClickListener(donorBookPage);
-        bookView.setOnLongClickListener(donorBookPage);
+        if(donorBookPage!=null) {
+            bookView.setOnClickListener(donorBookPage);
+            bookView.setOnLongClickListener(donorBookPage);
+        }
+        else {
+            bookView.setOnClickListener(receiverBookPage);
+            bookView.setOnLongClickListener(receiverBookPage);
+        }
         return new BookItemViewHolder(bookView);
     }
 

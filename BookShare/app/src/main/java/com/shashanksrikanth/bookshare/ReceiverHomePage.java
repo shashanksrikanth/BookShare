@@ -135,7 +135,11 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        // Show books in list when list is clicked on
+        Intent intent = new Intent(this, ReceiverBookPage.class);
+        int index = recyclerView.getChildLayoutPosition(v);
+        ListItem item = listItems.get(index);
+        intent.putExtra("ListItem", item);
+        startActivity(intent);
     }
 
     @Override
