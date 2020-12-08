@@ -80,7 +80,7 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
 
         // Set up RecyclerView
         recyclerView = findViewById(R.id.donorHomeRecyclerView);
-        adapter = new ListItemAdapter(donorList, this);
+        adapter = new ListItemAdapter(donorList, this, null);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateDonorList();
@@ -190,6 +190,7 @@ public class DonorHomePage extends AppCompatActivity implements View.OnClickList
                                 ListItem item = document.toObject(ListItem.class);
                                 Log.d(TAG, "onComplete: " + item.listName);
                                 item.setListDatabaseID(document.getId());
+                                databaseReference.collection("bookLists").document(document.getId()).update("listDatabaseID", document.getId());
                                 donorList.add(item);
                                 adapter.notifyDataSetChanged();
                             }

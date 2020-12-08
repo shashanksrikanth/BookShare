@@ -65,7 +65,7 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
 
         // Set up RecyclerView
         recyclerView = findViewById(R.id.donorBookPageRecyclerView);
-        adapter = new BookItemAdapter(bookList, this);
+        adapter = new BookItemAdapter(bookList, this, null);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -79,7 +79,7 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 ArrayList<String> isbnList = documentSnapshot.toObject(ListItem.class).isbnList;
                 for(String isbn : isbnList) {
-                    BookDownloader downloader = new BookDownloader(isbn, DonorBookPage.this);
+                    DonorBookDownloader downloader = new DonorBookDownloader(isbn, DonorBookPage.this);
                     new Thread(downloader).start();
                 }
             }
@@ -229,7 +229,7 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
                         adapter.notifyDataSetChanged();
                     }
                     else {
-                        BookDownloader downloader = new BookDownloader(isbn, DonorBookPage.this);
+                        DonorBookDownloader downloader = new DonorBookDownloader(isbn, DonorBookPage.this);
                         new Thread(downloader).start();
                     }
 

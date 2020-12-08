@@ -13,6 +13,28 @@
         android:layout_height="match_parent"
         android:background="@color/colorBackground"
         tools:context=".ReceiverHomePage">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/receiverHomeRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/receiverHomeListTitle" />
+
+        <TextView
+            android:id="@+id/receiverHomeListTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:text="@string/donation_lists"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ListView
