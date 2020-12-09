@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,8 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
     FirebaseFirestore databaseReference;
     String listDatabaseID;
     HashMap<String, String> selectedBooks = new HashMap<>();
+
+    private static final String TAG = "ReceiverBookPage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,44 +149,43 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
     public void sendEmail() {
         // Helper function that sends an email
         final String[] uid = {""};
-        databaseReference.collection("bookLists").document(listDatabaseID).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        databaseReference.collection("bookLists").document(listDatabaseID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     ListItem item = task.getResult().toObject(ListItem.class);
                     uid[0] = item.uid;
                 }
+                final String[] emailAddresses = {""};
+                databaseReference.collection("users").document(uid[0]).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    AppUser user = task.getResult().toObject(AppUser.class);
+                                    emailAddresses[0] = user.email;
+                                }
+                                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                String emailSubject = "Donation request from " + user.getDisplayName();
+                                String emailText = "Hello there! \n" + "This is a donation request for the following books: \n";
+                                for(String key : selectedBooks.keySet()) emailText += selectedBooks.get(key) + '\n';
+                                emailText += "Please email back to set up donation schematics. \n";
+                                emailText += "Have a great day!";
+                                Log.d(TAG, "onComplete: " + emailText);
+                                intent.putExtra(Intent.EXTRA_EMAIL, emailAddresses);
+                                intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+                                intent.putExtra(Intent.EXTRA_TEXT, emailText);
+                                if(intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
+                                else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(ReceiverBookPage.this);
+                                    builder.setTitle("App not found!");
+                                    builder.setMessage("No app is found that handles emails on your device");
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
+                            }
+                });
             }
         });
-        final String[] emailAddresses = {""};
-        databaseReference.collection("users").document(uid[0]).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()) {
-                            AppUser user = task.getResult().toObject(AppUser.class);
-                            emailAddresses[0] = user.email;
-                        }
-                    }
-                });
-        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String emailSubject = "Donation request from " + user.getDisplayName();
-        String emailText = "Hello there! \n" + "This is a donation request for the following books: \n";
-        for(String key : selectedBooks.keySet()) emailText += selectedBooks.get(key) + '\n';
-        emailText += "Please email back to set up donation schematics. \n";
-        emailText += "Have a great day!";
-        intent.putExtra(Intent.EXTRA_EMAIL, emailAddresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-        intent.putExtra(Intent.EXTRA_TEXT, emailText);
-        if(intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
-        else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("App not found!");
-            builder.setMessage("No app is found that handles emails on your device");
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
     }
 }
