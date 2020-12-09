@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/emailDonor"
+        android:icon="@drawable/baseline_email_black_48"
+        android:title="@string/email_donor"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/receiverBookDescription"
+        android:icon="@drawable/baseline_help_black_48"
+        android:title="@string/receiver_book_description"
+        app:showAsAction="ifRoom" />
+</menu>

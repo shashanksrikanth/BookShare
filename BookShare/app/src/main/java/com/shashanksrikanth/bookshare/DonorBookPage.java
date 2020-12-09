@@ -133,8 +133,9 @@ public class DonorBookPage extends AppCompatActivity implements View.OnClickList
                 AlertDialog dialog = definitionBuilder.create();
                 dialog.show();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
     @Override

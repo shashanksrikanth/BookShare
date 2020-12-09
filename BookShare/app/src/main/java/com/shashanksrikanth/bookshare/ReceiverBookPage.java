@@ -1,20 +1,30 @@
 package com.shashanksrikanth.bookshare;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReceiverBookPage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     // This class is for seeing the books that are up for donation in a list, and mass selecting them for requesting donations
@@ -27,8 +37,8 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
     BookItemAdapter adapter;
 
     FirebaseFirestore databaseReference;
-
     String listDatabaseID;
+    HashMap<String, String> selectedBooks = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +82,34 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu layout
+        getMenuInflater().inflate(R.menu.receiver_book_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // What to do based on which button is selected in the menu
+        switch (item.getItemId()) {
+            case R.id.emailDonor:
+                sendEmail();
+                return true;
+            case R.id.receiverBookDescription:
+                AlertDialog.Builder definitionBuilder = new AlertDialog.Builder(this);
+                definitionBuilder.setIcon(R.drawable.baseline_help_black_48);
+                definitionBuilder.setTitle("How to request a donation?");
+                definitionBuilder.setMessage("Long click on the books you want to request for donation. Then, press the " +
+                        "email icon in the top, and send an email to the donor.");
+                AlertDialog dialog = definitionBuilder.create();
+                dialog.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         // Opens up the details about the book
         int position = recyclerView.getChildLayoutPosition(v);
@@ -83,6 +121,19 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
 
     @Override
     public boolean onLongClick(View v) {
+        // Item is selected for requesting donation
+        int position = recyclerView.getChildLayoutPosition(v);
+        BookItem book = bookList.get(position);
+        if(!book.bookIsSelected) {
+            v.setBackgroundResource(R.color.colorSelected);
+            selectedBooks.put(book.bookISBN, book.bookTitle);
+            book.changeStatusSelected(true);
+        }
+        else {
+            v.setBackgroundResource(R.color.colorDarkCream);
+            selectedBooks.remove(book.bookISBN);
+            book.changeStatusSelected(false);
+        }
         return true;
     }
 
@@ -90,5 +141,49 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
         // Add a book to the list- isbn and book is sent from BookDownloader
         bookList.add(item);
         adapter.notifyDataSetChanged();
+    }
+
+    public void sendEmail() {
+        // Helper function that sends an email
+        final String[] uid = {""};
+        databaseReference.collection("bookLists").document(listDatabaseID).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    ListItem item = task.getResult().toObject(ListItem.class);
+                    uid[0] = item.uid;
+                }
+            }
+        });
+        final String[] emailAddresses = {""};
+        databaseReference.collection("users").document(uid[0]).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            AppUser user = task.getResult().toObject(AppUser.class);
+                            emailAddresses[0] = user.email;
+                        }
+                    }
+                });
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String emailSubject = "Donation request from " + user.getDisplayName();
+        String emailText = "Hello there! \n" + "This is a donation request for the following books: \n";
+        for(String key : selectedBooks.keySet()) emailText += selectedBooks.get(key) + '\n';
+        emailText += "Please email back to set up donation schematics. \n";
+        emailText += "Have a great day!";
+        intent.putExtra(Intent.EXTRA_EMAIL, emailAddresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+        intent.putExtra(Intent.EXTRA_TEXT, emailText);
+        if(intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("App not found!");
+            builder.setMessage("No app is found that handles emails on your device");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 }
