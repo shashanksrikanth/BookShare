@@ -164,25 +164,18 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
                                     AppUser user = task.getResult().toObject(AppUser.class);
                                     emailAddresses[0] = user.email;
                                 }
-                                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 String emailSubject = "Donation request from " + user.getDisplayName();
                                 String emailText = "Hello there! \n" + "This is a donation request for the following books: \n";
                                 for(String key : selectedBooks.keySet()) emailText += selectedBooks.get(key) + '\n';
                                 emailText += "Please email back to set up donation schematics. \n";
                                 emailText += "Have a great day!";
-                                Log.d(TAG, "onComplete: " + emailText);
+                                Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.putExtra(Intent.EXTRA_EMAIL, emailAddresses);
                                 intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
                                 intent.putExtra(Intent.EXTRA_TEXT, emailText);
-                                if(intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
-                                else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(ReceiverBookPage.this);
-                                    builder.setTitle("App not found!");
-                                    builder.setMessage("No app is found that handles emails on your device");
-                                    AlertDialog dialog = builder.create();
-                                    dialog.show();
-                                }
+                                intent.setType("message/rfc822");
+                                startActivity(Intent.createChooser(intent, "Choose an Email client :"));
                             }
                 });
             }
