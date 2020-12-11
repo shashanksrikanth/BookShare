@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,8 +38,6 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
     FirebaseFirestore databaseReference;
     String listDatabaseID;
     HashMap<String, String> selectedBooks = new HashMap<>();
-
-    private static final String TAG = "ReceiverBookPage";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +92,14 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
         // What to do based on which button is selected in the menu
         switch (item.getItemId()) {
             case R.id.emailDonor:
-                sendEmail();
+                if(selectedBooks.keySet().size()!=0) sendEmail();
+                else {
+                    AlertDialog.Builder noticeBuilder = new AlertDialog.Builder(this);
+                    noticeBuilder.setTitle("No Books Selected");
+                    noticeBuilder.setMessage("One or more books must be selected to send an email.");
+                    AlertDialog noticeDialog = noticeBuilder.create();
+                    noticeDialog.show();
+                }
                 return true;
             case R.id.receiverBookDescription:
                 AlertDialog.Builder definitionBuilder = new AlertDialog.Builder(this);
@@ -165,9 +168,13 @@ public class ReceiverBookPage extends AppCompatActivity implements View.OnClickL
                                     emailAddresses[0] = user.email;
                                 }
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                String emailSubject = "Donation request from " + user.getDisplayName();
+                                String emailSubject = "Donation request!";
                                 String emailText = "Hello there! \n" + "This is a donation request for the following books: \n";
-                                for(String key : selectedBooks.keySet()) emailText += selectedBooks.get(key) + '\n';
+                                int itemCount = 1;
+                                for(String key : selectedBooks.keySet()) {
+                                    emailText += itemCount + ". " + selectedBooks.get(key) + '\n';
+                                    itemCount++;
+                                }
                                 emailText += "Please email back to set up donation schematics. \n";
                                 emailText += "Have a great day!";
                                 Intent intent = new Intent(Intent.ACTION_SEND);
