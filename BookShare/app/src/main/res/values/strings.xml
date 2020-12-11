@@ -31,4 +31,6 @@
     <string name="description">Description:</string>
     <string name="genre">Genre:</string>
     <string name="no_description_available">No Description Available</string>
+    <string name="email_donor">Email Donor</string>
+    <string name="receiver_book_description">Receiver Book Description</string>
 </resources>

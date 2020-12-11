@@ -13,6 +13,7 @@ public class BookItem implements Serializable {
     public int bookAverageRating;
     public String bookImageLink;
     public String bookGenre;
+    public boolean bookIsSelected;
 
     public BookItem() {}
 
@@ -26,5 +27,10 @@ public class BookItem implements Serializable {
         this.bookAverageRating = bookAverageRating;
         this.bookImageLink = bookImageLink;
         this.bookGenre = bookGenre;
+        this.bookIsSelected = false;
+    }
+
+    public void changeStatusSelected(boolean newStatus) {
+        this.bookIsSelected = newStatus;
     }
 }
