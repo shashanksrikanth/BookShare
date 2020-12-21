@@ -8,11 +8,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,9 +28,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 public class ReceiverHomePage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     // Activity that is the home page for receivers
@@ -74,26 +81,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
         adapter = new ListItemAdapter(listItems, null, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Populate list array to show lists for donations, excluding the lists that belong to the current user
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert currentUser != null;
-        final String userID = currentUser.getUid();
-        databaseReference.collection("bookLists").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for(DocumentSnapshot snapshot : task.getResult()) {
-                        ListItem item = snapshot.toObject(ListItem.class);
-                        if(!item.uid.equals(userID)) {
-                            item.setListDatabaseID(snapshot.getId());
-                            listItems.add(item);
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
-        });
+        updateDonorList();
     }
 
     private void selectItem(int position) {
@@ -124,13 +112,56 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu layout
+        getMenuInflater().inflate(R.menu.receiver_home_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Dictates what to do based on which menu item is clicked on
         if(drawerToggle.onOptionsItemSelected(item)) {
             Log.d(TAG, "onOptionsItemSelected: drawerToggle " + item);
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        switch(item.getItemId()) {
+            case R.id.filterGenre:
+                final ArrayList<String>[] allGenres = new ArrayList[]{new ArrayList<>()};
+                databaseReference.collection("isbnLists").document("allUniqueGenres").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot snapshot = task.getResult();
+                        allGenres[0] = (ArrayList<String>) snapshot.get("uniqueGenres");
+                        String[] allGenresArray = allGenres[0].toArray(new String[0]);
+                        AlertDialog.Builder genreBuilder = new AlertDialog.Builder(ReceiverHomePage.this);
+                        genreBuilder.setTitle("Select Genre");
+                        genreBuilder.setIcon(R.drawable.baseline_filter_list_black_48);
+                        genreBuilder.setItems(allGenresArray, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(ReceiverHomePage.this, allGenres[0].get(which), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        genreBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing
+                            }
+                        });
+                        AlertDialog genreDialog = genreBuilder.create();
+                        genreDialog.show();
+                    }
+                });
+            case R.id.filterBookTitle:
+                //
+            case R.id.filterISBN:
+                //
+            case R.id.clearFilters:
+                //
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -155,5 +186,56 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
         AlertDialog dialog = builder.create();
         dialog.show();
         return true;
+    }
+
+    private void getListsByGenre(final String genre) {
+        // Helper function that shows the lists by genre
+        listItems.clear();
+        final ArrayList<String> listIds = new ArrayList<>();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+        final String userID = currentUser.getUid();
+        databaseReference.collection("bookLists").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for(DocumentSnapshot snapshot : task.getResult()) {
+                        ListItem item = snapshot.toObject(ListItem.class);
+                        if(!item.uid.equals(userID)) {
+                            ArrayList<String> isbnList = item.isbnList;
+                            for(String isbn : isbnList) {
+                                DocumentSnapshot isbnSnapshot = databaseReference.collection("isbnLists").document(isbn).get().getResult();
+                                if(isbnSnapshot.get("bookGenre").equals(genre)) {
+                                    listIds.addAll((Collection<? extends String>) isbnSnapshot.get("listIds"));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void updateDonorList() {
+        // Helper function that gets the lists from the database and updates the arraylist
+        listItems.clear();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+        final String userID = currentUser.getUid();
+        databaseReference.collection("bookLists").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for(DocumentSnapshot snapshot : task.getResult()) {
+                        ListItem item = snapshot.toObject(ListItem.class);
+                        if(!item.uid.equals(userID)) {
+                            item.setListDatabaseID(snapshot.getId());
+                            listItems.add(item);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        });
     }
 }

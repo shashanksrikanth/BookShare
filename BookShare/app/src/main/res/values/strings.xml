@@ -33,4 +33,9 @@
     <string name="no_description_available">No Description Available</string>
     <string name="email_donor">Email Donor</string>
     <string name="receiver_book_description">Receiver Book Description</string>
+    <string name="filter">Filter</string>
+    <string name="filter_by_genre">Filter by Genre</string>
+    <string name="filter_by_isbn">Filter by ISBN</string>
+    <string name="filter_by_book_title">Filter by Book Title</string>
+    <string name="clear_filters">Clear Filters</string>
 </resources>

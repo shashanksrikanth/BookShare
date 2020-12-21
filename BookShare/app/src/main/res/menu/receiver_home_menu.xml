@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/filterISBN"
+        android:title="@string/filter_by_isbn" />
+    <item
+        android:id="@+id/filterBookTitle"
+        android:title="@string/filter_by_book_title" />
+    <item
+        android:id="@+id/filterGenre"
+        android:icon="@drawable/baseline_filter_list_black_48"
+        android:title="@string/filter_by_genre" />
+    <item
+        android:id="@+id/clearFilters"
+        android:title="@string/clear_filters" />
+</menu>
