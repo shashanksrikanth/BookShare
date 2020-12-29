@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,7 +56,7 @@ public class UserHomePage extends AppCompatActivity {
         databaseReference = FirebaseFirestore.getInstance();
 
         // Set up drawer menu
-        drawerItems = new String[] {"Donor Page", "Receiver Page"};
+        drawerItems = new String[] {"Donor Page", "Receiver Page", "Sign Out"};
         drawerLayout = findViewById(R.id.drawer_layout);
         drawerList = findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, drawerItems));
@@ -94,9 +96,14 @@ public class UserHomePage extends AppCompatActivity {
             Intent intent = new Intent(this, DonorHomePage.class);
             startActivity(intent);
         }
-        else {
+        else if(drawerItems[position].equals("Receiver Page")){
             Intent intent = new Intent(this, ReceiverHomePage.class);
             startActivity(intent);
+        }
+        else {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(this,"Signed out!", Toast.LENGTH_LONG).show();
+            this.finishAffinity();
         }
         drawerLayout.closeDrawer(drawerList);
     }
