@@ -17,4 +17,5 @@ In the branches section and in the commits, you will see tags such as *BOOK-2* o
 9. *BOOK-16*: ReceiverHomePage and basic ReceiverBookPage functionality added
 10. *BOOK-17*: Adding filtration functionality- the user can filter the lists by the genre of book or the name of the book
 11. *BOOK-18*: Adding request functionality: a user can select books and send an email to the donor for requesting the books
-12. *BOOK-20*: Check if the device is connected to the network
+12. *BOOK-19*: Adding sign-out functionality
+13. *BOOK-20*: Check if the device is connected to the network
