@@ -15,4 +15,5 @@ In the branches section and in the commits, you will see tags such as *BOOK-2* o
 7. *BOOK-10*: Adding drawer menus to UserHomePage, DonorHomePage, and ReceiverHomePage (i.e., the home pages)
 8. *BOOK-15*: Functionality for updating the isbnList database everytime a book is added/deleted and a list is added/deleted
 9. *BOOK-16*: ReceiverHomePage and basic ReceiverBookPage functionality added
-10. *BOOK-18*: Adding request functionality: a user can select books and send an email to the donor for requesting the books
+10. *BOOK-17*: Adding filtration functionality- the user can filter the lists by the genre of book or the name of the book.
+11. *BOOK-18*: Adding request functionality: a user can select books and send an email to the donor for requesting the books
