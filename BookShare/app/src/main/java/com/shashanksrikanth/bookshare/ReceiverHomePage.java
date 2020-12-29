@@ -12,12 +12,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -149,9 +152,28 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                     }
                 });
             case R.id.filterBookTitle:
-                //
-            case R.id.filterISBN:
-                //
+                AlertDialog.Builder bookBuilder = new AlertDialog.Builder(this);
+                bookBuilder.setTitle("Enter a book name or part of a book name");
+                bookBuilder.setIcon(R.drawable.baseline_filter_list_black_48);
+                final EditText editText = new EditText(this);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.setGravity(Gravity.CENTER_HORIZONTAL);
+                bookBuilder.setView(editText);
+                bookBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String bookQuery = editText.getText().toString().trim().toLowerCase();
+                        getListsByBook(bookQuery);
+                    }
+                });
+                bookBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                    }
+                });
+                AlertDialog bookDialog = bookBuilder.create();
+                bookDialog.show();
             case R.id.clearFilters:
                 updateDonorList();
             default:
@@ -204,6 +226,42 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         DocumentSnapshot isbnSnapshot = task.getResult();
                                         if(isbnSnapshot.get("bookGenre").equals(genre)) {
+                                            if(!listItems.contains(item)) {
+                                                listItems.add(item);
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void getListsByBook(final String bookName) {
+        // Helper function that shows the lists with a specific book
+        listItems.clear();
+        adapter.notifyDataSetChanged();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+        final String userID = currentUser.getUid();
+        databaseReference.collection("bookLists").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for(DocumentSnapshot snapshot : task.getResult()) {
+                        final ListItem item = snapshot.toObject(ListItem.class);
+                        if(!item.uid.equals(userID)) {
+                            ArrayList<String> isbnList = item.isbnList;
+                            for(String isbn : isbnList) {
+                                databaseReference.collection("isbnLists").document(isbn).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot isbnSnapshot = task.getResult();
+                                        if(isbnSnapshot.get("bookTitle").toString().toLowerCase().equals(bookName) || isbnSnapshot.get("bookTitle").toString().toLowerCase().contains(bookName)) {
                                             if(!listItems.contains(item)) {
                                                 listItems.add(item);
                                                 adapter.notifyDataSetChanged();

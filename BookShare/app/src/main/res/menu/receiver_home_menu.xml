@@ -3,9 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/filterISBN"
-        android:title="@string/filter_by_isbn" />
-    <item
         android:id="@+id/filterBookTitle"
         android:title="@string/filter_by_book_title" />
     <item
