@@ -186,6 +186,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
     private void getListsByGenre(final String genre) {
         // Helper function that shows the lists by genre
         listItems.clear();
+        adapter.notifyDataSetChanged();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
         final String userID = currentUser.getUid();
@@ -203,8 +204,10 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         DocumentSnapshot isbnSnapshot = task.getResult();
                                         if(isbnSnapshot.get("bookGenre").equals(genre)) {
-                                            if(!listItems.contains(item)) listItems.add(item);
-                                            adapter.notifyDataSetChanged();
+                                            if(!listItems.contains(item)) {
+                                                listItems.add(item);
+                                                adapter.notifyDataSetChanged();
+                                            }
                                         }
                                     }
                                 });
