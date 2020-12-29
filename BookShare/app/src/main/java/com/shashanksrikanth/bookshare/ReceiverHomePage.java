@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +56,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_receiver_home_page);
 
         // Set up drawer menu
-        drawerItems = new String[] {"Home Page", "Donor Page"};
+        drawerItems = new String[] {"Home Page", "Donor Page", "Sign Out"};
         drawerLayout = findViewById(R.id.drawerLayoutReceiverHomePage);
         drawerList = findViewById(R.id.leftDrawerReceiverHomePage);
         drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, drawerItems));
@@ -88,9 +89,14 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
             Intent intent = new Intent(this, UserHomePage.class);
             startActivity(intent);
         }
-        else {
+        else if(drawerItems[position].equals("Donor Page")){
             Intent intent = new Intent(this, DonorHomePage.class);
             startActivity(intent);
+        }
+        else {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(this,"Signed out!", Toast.LENGTH_LONG).show();
+            this.finishAffinity();
         }
         drawerLayout.closeDrawer(drawerList);
     }
