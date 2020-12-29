@@ -15,12 +15,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,13 +26,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 public class ReceiverHomePage extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     // Activity that is the home page for receivers
@@ -140,7 +135,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                         genreBuilder.setItems(allGenresArray, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(ReceiverHomePage.this, allGenres[0].get(which), Toast.LENGTH_LONG).show();
+                                getListsByGenre(allGenres[0].get(which));
                             }
                         });
                         genreBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -158,7 +153,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
             case R.id.filterISBN:
                 //
             case R.id.clearFilters:
-                //
+                updateDonorList();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -191,7 +186,6 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
     private void getListsByGenre(final String genre) {
         // Helper function that shows the lists by genre
         listItems.clear();
-        final ArrayList<String> listIds = new ArrayList<>();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
         final String userID = currentUser.getUid();
@@ -200,14 +194,20 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
                     for(DocumentSnapshot snapshot : task.getResult()) {
-                        ListItem item = snapshot.toObject(ListItem.class);
+                        final ListItem item = snapshot.toObject(ListItem.class);
                         if(!item.uid.equals(userID)) {
                             ArrayList<String> isbnList = item.isbnList;
                             for(String isbn : isbnList) {
-                                DocumentSnapshot isbnSnapshot = databaseReference.collection("isbnLists").document(isbn).get().getResult();
-                                if(isbnSnapshot.get("bookGenre").equals(genre)) {
-                                    listIds.addAll((Collection<? extends String>) isbnSnapshot.get("listIds"));
-                                }
+                                databaseReference.collection("isbnLists").document(isbn).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot isbnSnapshot = task.getResult();
+                                        if(isbnSnapshot.get("bookGenre").equals(genre)) {
+                                            if(!listItems.contains(item)) listItems.add(item);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
                             }
                         }
                     }
