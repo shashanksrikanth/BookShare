@@ -24,7 +24,7 @@ A lot of us have a multitude of books that we have read and are currently sittin
 ## App on the Google Playstore
 Currently working on this.
 
-### User Stories
+## User Stories
 
 In the branches section and in the commits, you will see tags such as *BOOK-2* or *BOOK-3*. This refers to a specific user-story in the Jira board for this project. For reference,  those user-stories are included below. If you see a user story missing, it might have been a design story or such that did not have any coding involved, or a sub task for one of these user stories. 
 
