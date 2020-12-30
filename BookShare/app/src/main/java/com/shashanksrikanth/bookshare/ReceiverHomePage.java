@@ -157,6 +157,7 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                         genreDialog.show();
                     }
                 });
+                return true;
             case R.id.filterBookTitle:
                 AlertDialog.Builder bookBuilder = new AlertDialog.Builder(this);
                 bookBuilder.setTitle("Enter a book name or part of a book name");
@@ -180,8 +181,10 @@ public class ReceiverHomePage extends AppCompatActivity implements View.OnClickL
                 });
                 AlertDialog bookDialog = bookBuilder.create();
                 bookDialog.show();
+                return true;
             case R.id.clearFilters:
                 updateDonorList();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
